@@ -1,0 +1,59 @@
+/*
+ * Tests for the project 01 chips.
+ *
+ * Each test runs a chip over its whole truth table and compares the
+ * result with a reference value computed with plain C operators.
+ * (C operators are fine HERE: this is test code, not chip code.)
+ */
+#include <stdio.h>
+
+#include "gates.h"
+
+static int checks = 0;
+static int failures = 0;
+
+/* Compare one chip output with the expected value; report on mismatch. */
+static void expect(const char *what, bit got, bit expected) {
+  checks++;
+  if (got != expected) {
+    failures++;
+    printf("FAIL %s: got %d, expected %d\n", what, got, expected);
+  }
+}
+
+static void test_Not(void) {
+  for (bit in = 0; in <= 1; in++) {
+    char what[32];
+    snprintf(what, sizeof what, "Not(in=%d)", in);
+    expect(what, Not(in), !in);
+  }
+}
+
+static void test_And(void) {
+  for (bit a = 0; a <= 1; a++) {
+    for (bit b = 0; b <= 1; b++) {
+      char what[32];
+      snprintf(what, sizeof what, "And(a=%d, b=%d)", a, b);
+      expect(what, And(a, b), a && b);
+    }
+  }
+}
+
+static void test_Or(void) {
+  for (bit a = 0; a <= 1; a++) {
+    for (bit b = 0; b <= 1; b++) {
+      char what[32];
+      snprintf(what, sizeof what, "Or(a=%d, b=%d)", a, b);
+      expect(what, Or(a, b), a || b);
+    }
+  }
+}
+
+int main(void) {
+  test_Not();
+  test_And();
+  test_Or();
+
+  printf("%d checks, %d failures\n", checks, failures);
+  return failures == 0 ? 0 : 1;
+}
