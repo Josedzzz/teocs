@@ -1,0 +1,15 @@
+# Build artifacts
+*.o
+*.a
+*.d
+*.out
+build/
+
+# Debug symbols (macOS)
+*.dSYM/
+
+# Editors / OS
+.DS_Store
+.vscode/
+.idea/
+*.swp
