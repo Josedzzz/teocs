@@ -26,3 +26,9 @@ void DMux(bit in, bit sel, bit *a, bit *b) {
   *a = And(in, Not(sel));
   *b = And(in, sel);
 }
+
+void Not16(const bit *in, bit *out) {
+  for (int i = 0; i < 16; i++) {
+    out[i] = Not(in[i]);
+  }
+}
