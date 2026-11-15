@@ -32,3 +32,9 @@ void Not16(const bit *in, bit *out) {
     out[i] = Not(in[i]);
   }
 }
+
+void And16(const bit *a, const bit *b, bit *out) {
+  for (int i = 0; i < 16; i++) {
+    out[i] = And(a[i], b[i]);
+  }
+}

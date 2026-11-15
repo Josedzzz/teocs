@@ -5,6 +5,7 @@
  * result with a reference value computed with plain C operators.
  * (C operators are fine HERE: this is test code, not chip code.)
  */
+#include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
 
@@ -119,6 +120,24 @@ static void test_Not16(void) {
   }
 }
 
+static void test_And16(void) {
+  for (size_t p = 0; p < NUM_PATTERNS; p++) {
+    for (size_t q = 0; q < NUM_PATTERNS; q++) {
+      bit a[16], b[16], out[16];
+      to_bus(patterns[p], a);
+      to_bus(patterns[q], b);
+      And16(a, b, out);
+
+      for (int i = 0; i < 16; i++) {
+        char what[40];
+        snprintf(what, sizeof what, "And16(a=0x%04X, b=0x%04X)[%d]",
+                 patterns[p], patterns[q], i);
+        expect(what, out[i], a[i] && b[i]);
+      }
+    }
+  }
+}
+
 int main(void) {
   test_Not();
   test_And();
@@ -127,6 +146,7 @@ int main(void) {
   test_Mux();
   test_DMux();
   test_Not16();
+  test_And16();
 
   printf("%d checks, %d failures\n", checks, failures);
   return failures == 0 ? 0 : 1;
