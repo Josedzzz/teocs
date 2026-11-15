@@ -15,3 +15,9 @@ bit Xor(bit a, bit b) {
   bit x2 = nand(Not(a), b);
   return nand(x1, x2);
 }
+
+bit Mux(bit a, bit b, bit sel) {
+  bit x1 = And(a, Not(sel));
+  bit x2 = And(b, sel);
+  return Or(x1, x2);
+}

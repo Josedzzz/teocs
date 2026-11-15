@@ -59,11 +59,24 @@ static void test_Xor(void) {
   }
 }
 
+static void test_Mux(void) {
+  for (bit a = 0; a <= 1; a++) {
+    for (bit b = 0; b <= 1; b++) {
+      for (bit sel = 0; sel <= 1; sel++) {
+        char what[32];
+        snprintf(what, sizeof what, "Mux(a=%d, b=%d, sel=%d)", a, b, sel);
+        expect(what, Mux(a, b, sel), sel ? b : a);
+      }
+    }
+  }
+}
+
 int main(void) {
   test_Not();
   test_And();
   test_Or();
   test_Xor();
+  test_Mux();
 
   printf("%d checks, %d failures\n", checks, failures);
   return failures == 0 ? 0 : 1;
