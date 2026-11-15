@@ -49,10 +49,21 @@ static void test_Or(void) {
   }
 }
 
+static void test_Xor(void) {
+  for (bit a = 0; a <= 1; a++) {
+    for (bit b = 0; b <= 1; b++) {
+      char what[32];
+      snprintf(what, sizeof what, "Xor(a=%d, b=%d)", a, b);
+      expect(what, Xor(a, b), a ^ b);
+    }
+  }
+}
+
 int main(void) {
   test_Not();
   test_And();
   test_Or();
+  test_Xor();
 
   printf("%d checks, %d failures\n", checks, failures);
   return failures == 0 ? 0 : 1;
