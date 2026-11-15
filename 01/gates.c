@@ -21,3 +21,8 @@ bit Mux(bit a, bit b, bit sel) {
   bit x2 = And(b, sel);
   return Or(x1, x2);
 }
+
+void DMux(bit in, bit sel, bit *a, bit *b) {
+  *a = And(in, Not(sel));
+  *b = And(in, sel);
+}

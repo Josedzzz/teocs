@@ -71,12 +71,28 @@ static void test_Mux(void) {
   }
 }
 
+static void test_DMux(void) {
+  for (bit in = 0; in <= 1; in++) {
+    for (bit sel = 0; sel <= 1; sel++) {
+      bit a, b;
+      DMux(in, sel, &a, &b);
+
+      char what[32];
+      snprintf(what, sizeof what, "DMux(in=%d, sel=%d).a", in, sel);
+      expect(what, a, sel ? 0 : in);
+      snprintf(what, sizeof what, "DMux(in=%d, sel=%d).b", in, sel);
+      expect(what, b, sel ? in : 0);
+    }
+  }
+}
+
 int main(void) {
   test_Not();
   test_And();
   test_Or();
   test_Xor();
   test_Mux();
+  test_DMux();
 
   printf("%d checks, %d failures\n", checks, failures);
   return failures == 0 ? 0 : 1;
