@@ -225,6 +225,38 @@ static void test_Mux4Way16(void) {
   }
 }
 
+static void test_Mux8Way16(void) {
+  /* 8 inputs x all patterns would be ~215 million checks, so instead give
+   * each input its own DIFFERENT pattern: if the chip picks the wrong
+   * input, at least one wire is wrong. Then rotate the patterns so every
+   * input also gets tried with every pattern. */
+  static const uint16_t distinct[8] = {0x0000, 0xFFFF, 0xAAAA, 0x5555,
+                                       0x00FF, 0xFF00, 0x0F0F, 0xF0F0};
+
+  for (int r = 0; r < 8; r++) {
+    bit in[8][16]; /* in[0] is input a, in[1] is b, ..., in[7] is h */
+    for (int j = 0; j < 8; j++) {
+      to_bus(distinct[(j + r) % 8], in[j]);
+    }
+
+    for (unsigned s = 0; s < 8; s++) {
+      bit sel[3], out[16];
+      sel[0] = s & 1;
+      sel[1] = (s >> 1) & 1;
+      sel[2] = (s >> 2) & 1;
+      Mux8Way16(in[0], in[1], in[2], in[3], in[4], in[5], in[6], in[7], sel,
+                out);
+
+      for (int i = 0; i < 16; i++) {
+        char what[48];
+        snprintf(what, sizeof what, "Mux8Way16(rotation=%d, sel=%u)[%d]", r, s,
+                 i);
+        expect(what, out[i], in[s][i]);
+      }
+    }
+  }
+}
+
 int main(void) {
   test_Not();
   test_And();
@@ -238,6 +270,7 @@ int main(void) {
   test_Mux16();
   test_Or8Way();
   test_Mux4Way16();
+  test_Mux8Way16();
 
   printf("%d checks, %d failures\n", checks, failures);
   return failures == 0 ? 0 : 1;

@@ -66,3 +66,20 @@ void Mux4Way16(const bit *a, const bit *b, const bit *c, const bit *d,
   Mux16(c, d, sel[0], cd);    /* sel[0] picks c or d         */
   Mux16(ab, cd, sel[1], out); /* sel[1] picks the pair (top/bottom) */
 }
+
+void Mux8Way16(const bit *a, const bit *b, const bit *c, const bit *d,
+               const bit *e, const bit *f, const bit *g, const bit *h,
+               const bit *sel, bit *out) {
+  bit ab[16], cd[16], ef[16], gh[16];
+  bit aux1[16], aux2[16];
+
+  Mux16(a, b, sel[0], ab);
+  Mux16(c, d, sel[0], cd);
+  Mux16(e, f, sel[0], ef);
+  Mux16(g, h, sel[0], gh);
+
+  Mux16(ab, cd, sel[1], aux1);
+  Mux16(ef, gh, sel[1], aux2);
+
+  Mux16(aux1, aux2, sel[2], out);
+}
