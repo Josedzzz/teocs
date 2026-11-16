@@ -44,3 +44,9 @@ void Or16(const bit *a, const bit *b, bit *out) {
     out[i] = Or(a[i], b[i]);
   }
 }
+
+void Mux16(const bit *a, const bit *b, bit sel, bit *out) {
+  for (int i = 0; i < 16; i++) {
+    out[i] = Mux(a[i], b[i], sel);
+  }
+}

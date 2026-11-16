@@ -156,6 +156,26 @@ static void test_Or16(void) {
   }
 }
 
+static void test_Mux16(void) {
+  for (size_t p = 0; p < NUM_PATTERNS; p++) {
+    for (size_t q = 0; q < NUM_PATTERNS; q++) {
+      for (bit sel = 0; sel <= 1; sel++) {
+        bit a[16], b[16], out[16];
+        to_bus(patterns[p], a);
+        to_bus(patterns[q], b);
+        Mux16(a, b, sel, out);
+
+        for (int i = 0; i < 16; i++) {
+          char what[48];
+          snprintf(what, sizeof what, "Mux16(a=0x%04X, b=0x%04X, sel=%d)[%d]",
+                   patterns[p], patterns[q], sel, i);
+          expect(what, out[i], sel ? b[i] : a[i]);
+        }
+      }
+    }
+  }
+}
+
 int main(void) {
   test_Not();
   test_And();
@@ -166,6 +186,7 @@ int main(void) {
   test_Not16();
   test_And16();
   test_Or16();
+  test_Mux16();
 
   printf("%d checks, %d failures\n", checks, failures);
   return failures == 0 ? 0 : 1;
