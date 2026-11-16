@@ -176,6 +176,20 @@ static void test_Mux16(void) {
   }
 }
 
+static void test_Or8Way(void) {
+  /* Only 8 inputs, so test all 2^8 = 256 of them. */
+  for (unsigned v = 0; v < 256; v++) {
+    bit in[8];
+    for (int i = 0; i < 8; i++) {
+      in[i] = (v >> i) & 1;
+    }
+
+    char what[32];
+    snprintf(what, sizeof what, "Or8Way(in=0x%02X)", v);
+    expect(what, Or8Way(in), v != 0);
+  }
+}
+
 int main(void) {
   test_Not();
   test_And();
@@ -187,6 +201,7 @@ int main(void) {
   test_And16();
   test_Or16();
   test_Mux16();
+  test_Or8Way();
 
   printf("%d checks, %d failures\n", checks, failures);
   return failures == 0 ? 0 : 1;

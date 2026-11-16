@@ -50,3 +50,11 @@ void Mux16(const bit *a, const bit *b, bit sel, bit *out) {
     out[i] = Mux(a[i], b[i], sel);
   }
 }
+
+bit Or8Way(const bit *in) {
+  bit out = in[0];
+  for (int i = 1; i < 8; i++) {
+    out = Or(out, in[i]);
+  }
+  return out;
+}
