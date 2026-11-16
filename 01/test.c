@@ -190,6 +190,41 @@ static void test_Or8Way(void) {
   }
 }
 
+static void test_Mux4Way16(void) {
+  for (size_t pa = 0; pa < NUM_PATTERNS; pa++) {
+    for (size_t pb = 0; pb < NUM_PATTERNS; pb++) {
+      for (size_t pc = 0; pc < NUM_PATTERNS; pc++) {
+        for (size_t pd = 0; pd < NUM_PATTERNS; pd++) {
+          for (unsigned s = 0; s < 4; s++) {
+            bit a[16], b[16], c[16], d[16], sel[2], out[16];
+            to_bus(patterns[pa], a);
+            to_bus(patterns[pb], b);
+            to_bus(patterns[pc], c);
+            to_bus(patterns[pd], d);
+            sel[0] = s & 1;
+            sel[1] = (s >> 1) & 1;
+            Mux4Way16(a, b, c, d, sel, out);
+
+            /* Reference: the input whose number equals sel. */
+            const bit *inputs[4] = {a, b, c, d};
+            const bit *expected = inputs[s];
+
+            for (int i = 0; i < 16; i++) {
+              char what[80];
+              snprintf(what, sizeof what,
+                       "Mux4Way16(a=0x%04X, b=0x%04X, c=0x%04X, d=0x%04X, "
+                       "sel=%u)[%d]",
+                       patterns[pa], patterns[pb], patterns[pc], patterns[pd],
+                       s, i);
+              expect(what, out[i], expected[i]);
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
 int main(void) {
   test_Not();
   test_And();
@@ -202,6 +237,7 @@ int main(void) {
   test_Or16();
   test_Mux16();
   test_Or8Way();
+  test_Mux4Way16();
 
   printf("%d checks, %d failures\n", checks, failures);
   return failures == 0 ? 0 : 1;

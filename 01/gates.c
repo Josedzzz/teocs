@@ -58,3 +58,11 @@ bit Or8Way(const bit *in) {
   }
   return out;
 }
+
+void Mux4Way16(const bit *a, const bit *b, const bit *c, const bit *d,
+               const bit *sel, bit *out) {
+  bit ab[16], cd[16];
+  Mux16(a, b, sel[0], ab);    /* sel[0] picks a or b         */
+  Mux16(c, d, sel[0], cd);    /* sel[0] picks c or d         */
+  Mux16(ab, cd, sel[1], out); /* sel[1] picks the pair (top/bottom) */
+}
