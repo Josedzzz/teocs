@@ -276,6 +276,27 @@ static void test_DMux4Way(void) {
   }
 }
 
+static void test_DMux8Way(void) {
+  for (bit in = 0; in <= 1; in++) {
+    for (unsigned s = 0; s < 8; s++) {
+      bit sel[3], out[8]; /* out[0] is output a, ..., out[7] is h */
+      sel[0] = s & 1;
+      sel[1] = (s >> 1) & 1;
+      sel[2] = (s >> 2) & 1;
+      DMux8Way(in, sel, &out[0], &out[1], &out[2], &out[3], &out[4], &out[5],
+               &out[6], &out[7]);
+
+      /* Reference: the output whose number equals sel gets in; the rest 0. */
+      for (unsigned k = 0; k < 8; k++) {
+        char what[40];
+        snprintf(what, sizeof what, "DMux8Way(in=%d, sel=%u).%c", in, s,
+                 "abcdefgh"[k]);
+        expect(what, out[k], k == s ? in : 0);
+      }
+    }
+  }
+}
+
 int main(void) {
   test_Not();
   test_And();
@@ -291,6 +312,7 @@ int main(void) {
   test_Mux4Way16();
   test_Mux8Way16();
   test_DMux4Way();
+  test_DMux8Way();
 
   printf("%d checks, %d failures\n", checks, failures);
   return failures == 0 ? 0 : 1;

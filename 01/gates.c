@@ -90,3 +90,11 @@ void DMux4Way(bit in, const bit *sel, bit *a, bit *b, bit *c, bit *d) {
   DMux(ab, sel[0], a, b);
   DMux(cd, sel[0], c, d);
 }
+
+void DMux8Way(bit in, const bit *sel, bit *a, bit *b, bit *c, bit *d, bit *e,
+              bit *f, bit *g, bit *h) {
+  bit abcd, efgh;
+  DMux(in, sel[2], &abcd, &efgh);
+  DMux4Way(abcd, sel, a, b, c, d);
+  DMux4Way(efgh, sel, e, f, g, h);
+}
