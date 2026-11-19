@@ -83,3 +83,10 @@ void Mux8Way16(const bit *a, const bit *b, const bit *c, const bit *d,
 
   Mux16(aux1, aux2, sel[2], out);
 }
+
+void DMux4Way(bit in, const bit *sel, bit *a, bit *b, bit *c, bit *d) {
+  bit ab, cd;
+  DMux(in, sel[1], &ab, &cd);
+  DMux(ab, sel[0], a, b);
+  DMux(cd, sel[0], c, d);
+}
