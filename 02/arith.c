@@ -22,3 +22,8 @@ void Add16(const bit *a, const bit *b, bit *out) {
     out[i] = sum;
   }
 }
+
+void Inc16(const bit *in, bit *out) {
+  const bit addOne[16] = {1};
+  Add16(in, addOne, out);
+}

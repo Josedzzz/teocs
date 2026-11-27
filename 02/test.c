@@ -96,10 +96,29 @@ static void test_Add16(void) {
   }
 }
 
+static void test_Inc16(void) {
+  for (size_t p = 0; p < NUM_PATTERNS; p++) {
+    bit in[16], out[16];
+    to_bus(patterns[p], in);
+    Inc16(in, out);
+
+    /* Reference: real +1, cut to 16 bits (0xFFFF + 1 wraps to 0x0000). */
+    bit expected[16];
+    to_bus((uint16_t)(patterns[p] + 1), expected);
+
+    for (int i = 0; i < 16; i++) {
+      char what[32];
+      snprintf(what, sizeof what, "Inc16(in=0x%04X)[%d]", patterns[p], i);
+      expect(what, out[i], expected[i]);
+    }
+  }
+}
+
 int main(void) {
   test_HalfAdder();
   test_FullAdder();
   test_Add16();
+  test_Inc16();
 
   printf("%d checks, %d failures\n", checks, failures);
   return failures == 0 ? 0 : 1;
