@@ -5,6 +5,8 @@
  * reference value computed with plain C arithmetic.
  * (C operators are fine HERE: this is test code, not chip code.)
  */
+#include <stddef.h>
+#include <stdint.h>
 #include <stdio.h>
 
 #include "arith.h"
@@ -20,6 +22,19 @@ static void expect(const char *what, bit got, bit expected) {
     printf("FAIL %s: got %d, expected %d\n", what, got, expected);
   }
 }
+
+/* Spread a 16-bit number over a bus: bus[i] = bit i of v (bus[0] = LSB). */
+static void to_bus(uint16_t v, bit bus[16]) {
+  for (int i = 0; i < 16; i++) {
+    bus[i] = (v >> i) & 1;
+  }
+}
+
+/* 16-bit inputs chosen for arithmetic: edge values and long carry chains. */
+static const uint16_t patterns[] = {
+    0x0000, 0x0001, 0xFFFF, 0x7FFF, 0x8000, 0xAAAA, 0x5555, 0x1234,
+};
+#define NUM_PATTERNS (sizeof patterns / sizeof patterns[0])
 
 static void test_HalfAdder(void) {
   for (bit a = 0; a <= 1; a++) {
@@ -58,9 +73,33 @@ static void test_FullAdder(void) {
   }
 }
 
+static void test_Add16(void) {
+  for (size_t p = 0; p < NUM_PATTERNS; p++) {
+    for (size_t q = 0; q < NUM_PATTERNS; q++) {
+      bit a[16], b[16], out[16];
+      to_bus(patterns[p], a);
+      to_bus(patterns[q], b);
+      Add16(a, b, out);
+
+      /* Reference: real addition, cut to 16 bits (the overflow carry is
+       * dropped, like in the chip). */
+      bit expected[16];
+      to_bus((uint16_t)(patterns[p] + patterns[q]), expected);
+
+      for (int i = 0; i < 16; i++) {
+        char what[40];
+        snprintf(what, sizeof what, "Add16(a=0x%04X, b=0x%04X)[%d]",
+                 patterns[p], patterns[q], i);
+        expect(what, out[i], expected[i]);
+      }
+    }
+  }
+}
+
 int main(void) {
   test_HalfAdder();
   test_FullAdder();
+  test_Add16();
 
   printf("%d checks, %d failures\n", checks, failures);
   return failures == 0 ? 0 : 1;

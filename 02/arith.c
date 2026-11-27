@@ -13,3 +13,12 @@ void FullAdder(bit a, bit b, bit c, bit *sum, bit *carry) {
   *sum = Xor(aux, c);
   *carry = Or(And(a, b), And(aux, c));
 }
+
+void Add16(const bit *a, const bit *b, bit *out) {
+  bit carry = 0;
+  for (int i = 0; i < 16; i++) {
+    bit sum;
+    FullAdder(a[i], b[i], carry, &sum, &carry);
+    out[i] = sum;
+  }
+}
